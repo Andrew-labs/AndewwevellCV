@@ -1,13 +1,13 @@
 :root {
-  color-scheme: light;
-  --bg: #f6f7fb;
-  --surface: #ffffff;
-  --text: #07090f;
-  --muted: #5d6070;
-  --border: #e2e5ef;
-  --accent: #111827;
-  --accent-2: #444ef0;
-  --grid-line: rgba(10, 13, 40, 0.07);
+  color-scheme: dark;
+  --bg: #0a0a0a;
+  --surface: #1a1a1a;
+  --text: #ffffff;
+  --muted: #a0a0a0;
+  --border: rgba(255, 255, 255, 0.1);
+  --accent: #ffffff;
+  --accent-2: #6366f1;
+  --grid-line: rgba(255, 255, 255, 0.03);
   --radius-lg: 28px;
   --radius-md: 20px;
   --font-display: "Space Grotesk", "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -20,9 +20,38 @@
 body {
   margin: 0;
   font-family: var(--font-display);
-  background: var(--bg);
+  background: #000000;
   color: var(--text);
   min-height: 100vh;
+}
+
+/* Dark theme for hero section */
+.hero {
+  background: #000000;
+  color: #ffffff;
+}
+
+.hero__copy {
+  color: #ffffff;
+}
+
+.hero__eyebrow {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.hero__copy h1 {
+  display: none; /* Hidden - using large text on right instead */
+}
+
+.hero h1 {
+  color: #ffffff;
+  background: none;
+  -webkit-text-fill-color: #ffffff;
+  animation: none;
+}
+
+.hero__lede {
+  color: rgba(255, 255, 255, 0.8);
 }
 
 a {
@@ -88,13 +117,14 @@ a {
   padding: 1.25rem 2rem;
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(26, 26, 26, 0.8);
   backdrop-filter: blur(20px);
   position: sticky;
   top: 1.25rem;
   z-index: 5;
   min-height: 64px;
   flex-wrap: wrap;
+  color: var(--text);
 }
 
 .brand {
@@ -116,9 +146,25 @@ a {
 
 .brand strong {
   font-size: 1.05rem;
-  color: var(--accent);
+  color: var(--text);
   white-space: nowrap;
   line-height: 1.2;
+}
+
+.brand span:not(.brand__mark) {
+  color: var(--muted);
+}
+
+.nav {
+  color: var(--muted);
+}
+
+.nav a {
+  color: var(--muted);
+}
+
+.nav a:hover {
+  color: var(--text);
 }
 
 .brand span:not(.brand__mark) {
@@ -198,30 +244,52 @@ a {
 }
 
 .btn--solid {
-  background: var(--accent);
+  background: var(--accent-2);
   color: #fff;
-  box-shadow: 0 12px 28px rgba(17, 24, 39, 0.15);
+  box-shadow: 0 12px 28px rgba(68, 78, 240, 0.3);
+  border: none;
 }
 
 .btn--ghost {
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   background: transparent;
-  color: var(--accent);
+  color: #ffffff;
 }
 
 .hero {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: 1fr 1.5fr;
   align-items: center;
-  gap: 2.5rem;
+  gap: 4rem;
   padding: clamp(2.5rem, 7vw, 5rem) clamp(1.5rem, 8vw, 7rem);
   position: relative;
+  min-height: 80vh;
+}
+
+.hero__copy {
+  max-width: 100%;
+}
+
+.hero__visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 
 .hero.full-bleed {
-  --bleed-bg: linear-gradient(130deg, rgba(255, 255, 255, 0.82), rgba(210, 217, 255, 0.5));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 35px 80px rgba(36, 44, 92, 0.12);
+  --bleed-bg: var(--bg);
+  background: var(--bg);
+  box-shadow: none;
   overflow: visible;
+  position: relative;
+  border-radius: 0;
+}
+
+/* Dark theme for brain visualization area */
+.wireframe-sphere-container {
+  background: #000000;
+  border-radius: 20px;
 }
 
 .hero__eyebrow {
@@ -257,19 +325,28 @@ a {
 
 .hero__stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   padding: 0;
   margin: 0;
+  margin-top: 2rem;
 }
 
 .hero__stats div {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 1.4rem;
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--surface);
   font-size: 0.95rem;
   color: var(--muted);
+}
+
+.hero__stats .eyebrow {
+  color: var(--muted);
+}
+
+.hero__stats p {
+  color: var(--text);
 }
 
 .hero__stats div p {
@@ -300,6 +377,24 @@ a {
   overflow: visible;
   margin: 0 auto;
   max-width: 100%;
+  background: transparent;
+  border-radius: 0;
+}
+
+/* Text overlay on brain */
+.hero__visual {
+  position: relative;
+}
+
+.hero__large-text {
+  font-size: clamp(4rem, 10vw, 7rem);
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-family: var(--font-display);
 }
 
 #sphereCanvas {
@@ -307,6 +402,7 @@ a {
   height: 100%;
   cursor: grab;
   display: block;
+  border-radius: 20px;
 }
 
 #sphereCanvas:active {
@@ -498,6 +594,19 @@ a {
   transform: translateY(0);
 }
 
+/* Fallback: if JavaScript doesn't load, show content after a delay */
+@keyframes fadeInFallback {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* After 2 seconds, if still not visible, show anyway */
+.fade-in:not(.visible) {
+  animation: fadeInFallback 0.6s ease 2s forwards;
+}
+
 .slide-in-left {
   opacity: 0;
   transform: translateX(-30px);
@@ -648,6 +757,11 @@ section > * {
 .section-heading h2 {
   font-size: clamp(1.8rem, 4vw, 3rem);
   margin: 0.4rem 0;
+  color: var(--text);
+}
+
+.section-heading p {
+  color: var(--muted);
 }
 
 .section-heading p {
@@ -660,6 +774,7 @@ section > * {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--muted);
+  font-weight: 500;
 }
 
 .feature-grid {
@@ -677,10 +792,19 @@ section > * {
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   padding: 1.8rem;
-  box-shadow: 0 18px 40px rgba(15, 18, 31, 0.08);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+  color: var(--text);
+}
+
+.feature-card h3 {
+  color: var(--text);
+}
+
+.feature-card p {
+  color: var(--muted);
 }
 
 .feature-card h3 {
@@ -800,9 +924,10 @@ section > * {
 }
 
 .experience.full-bleed {
-  --bleed-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(236, 240, 255, 0.9));
+  --bleed-bg: var(--surface);
   border-radius: 36px;
-  box-shadow: 0 45px 90px rgba(15, 18, 31, 0.08);
+  box-shadow: 0 45px 90px rgba(0, 0, 0, 0.3);
+  background: var(--surface);
 }
 
 .experience__list {
@@ -813,6 +938,19 @@ section > * {
 .experience-card {
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.experience-card h3 {
+  color: var(--text);
+}
+
+.experience-card p {
+  color: var(--muted);
+}
+
+.experience-card ul li {
+  color: var(--muted);
 }
 
 .experience-card:last-of-type {
@@ -878,11 +1016,11 @@ section > * {
 
 .skills__tags span {
   padding: 0.7rem 1.4rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 242, 255, 0.8));
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 999px;
   font-size: 0.9rem;
-  color: var(--accent);
+  color: var(--text);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -899,14 +1037,10 @@ section > * {
 }
 
 .skills__tags span:hover {
-  transform: translateY(-3px) scale(1.05);
+  background: var(--surface);
   border-color: var(--accent-2);
-  color: white;
-  box-shadow: 0 8px 24px rgba(68, 78, 240, 0.25);
-}
-
-.skills__tags span:hover::before {
-  opacity: 1;
+  color: var(--text);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
 }
 
 .apps {
@@ -915,10 +1049,11 @@ section > * {
 }
 
 .apps.full-bleed {
-  --bleed-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(250, 245, 255, 0.9));
+  --bleed-bg: var(--surface);
   border-radius: 36px;
-  box-shadow: 0 40px 90px rgba(15, 18, 31, 0.08);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.3);
   padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 8vw, 7rem);
+  background: var(--surface);
 }
 
 .feature-card {
@@ -965,12 +1100,21 @@ section > * {
 
 .education__list article {
   padding: 2rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(245, 247, 255, 0.8));
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  color: var(--text);
+}
+
+.education__list article h3 {
+  color: var(--text);
+}
+
+.education__list article p {
+  color: var(--muted);
 }
 
 .education__list article::before {
@@ -997,10 +1141,65 @@ section > * {
 
 .courses {
   margin-top: 2.5rem;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: var(--radius-lg);
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.courses h4 {
+  color: var(--text);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin: 0 0 1.5rem 0;
+}
+
+.courses ul {
+  display: grid;
+  gap: 1rem;
+}
+
+.courses ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.courses ul li {
+  background: var(--surface);
+  color: var(--text);
   border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  padding-left: 2.5rem;
+  position: relative;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.courses ul li::before {
+  content: "→";
+  position: absolute;
+  left: 1.5rem;
+  color: var(--accent-2);
+  font-weight: 600;
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.courses ul li:hover {
+  background: var(--surface);
+  border-color: var(--accent-2);
+  transform: translateX(4px);
+}
+
+.courses ul li:hover::before {
+  transform: translateX(4px);
 }
 
 .courses h4 {
@@ -1017,34 +1216,6 @@ section > * {
   gap: 0.6rem;
 }
 
-.courses ul li {
-  padding: 0.8rem 1.2rem;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  transition: all 0.3s ease;
-  position: relative;
-  padding-left: 2.5rem;
-}
-
-.courses ul li::before {
-  content: "→";
-  position: absolute;
-  left: 1rem;
-  color: var(--accent-2);
-  font-weight: 600;
-  transition: transform 0.3s ease;
-}
-
-.courses ul li:hover {
-  transform: translateX(4px);
-  border-color: var(--accent-2);
-  box-shadow: 0 4px 12px rgba(68, 78, 240, 0.1);
-}
-
-.courses ul li:hover::before {
-  transform: translateX(4px);
-}
 
 @media (max-width: 768px) {
   .top-nav {

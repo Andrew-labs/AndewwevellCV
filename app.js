@@ -3,177 +3,203 @@ const navLinks = document.querySelectorAll(".nav a");
 const sections = document.querySelectorAll("main section[id]");
 const ghostButton = document.querySelector(".btn.btn--ghost");
 
-// Interactive wireframe sphere with dynamic scaling
-if (sphereContainer && typeof THREE !== "undefined") {
-  const container = sphereContainer;
-  const canvas = document.getElementById("sphereCanvas");
-  
-  // Scene setup
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer({ 
-    canvas: canvas,
-    alpha: true,
-    antialias: true 
-  });
-  
-  function resizeRenderer() {
-    const rect = container.getBoundingClientRect();
-    const baseSize = Math.min(rect.width, rect.height);
-    // Renderer size matches container - we'll handle scaling via camera
-    const size = baseSize;
-    renderer.setSize(size, size);
-    camera.aspect = 1;
-    camera.updateProjectionMatrix();
-    // Adjust camera to ensure sphere fits even at max scale
-    camera.position.z = 6;
-  }
-  resizeRenderer();
-  window.addEventListener("resize", resizeRenderer);
-  
-  // Create wireframe sphere with nested spheres
-  const spheres = [];
-  const sphereCount = 3;
-  const baseRadius = 1.9; // Slightly larger radius for bigger visual
-  
-  for (let i = 0; i < sphereCount; i++) {
-    const radius = baseRadius * (1 - i * 0.3);
-    const geometry = new THREE.SphereGeometry(radius, 32, 32);
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x444ef0,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.6 - i * 0.15
-    });
-    const sphere = new THREE.Mesh(geometry, material);
-    spheres.push({ mesh: sphere, baseRadius: radius, index: i });
-    scene.add(sphere);
-  }
-  
-  camera.position.z = 6.5; // Moved camera back slightly to keep full view
-  
-  // Mouse interaction
-  let mouseX = 0;
-  let mouseY = 0;
-  let targetRotationX = 0;
-  let targetRotationY = 0;
-  let isMouseDown = false;
-  let lastMouseX = 0;
-  let lastMouseY = 0;
-  
-  container.addEventListener("mousemove", (e) => {
-    const rect = container.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+// Wireframe brain with nodes and connections - MOFFETT AI style
+// Wrap in try-catch to prevent breaking the page
+try {
+  if (sphereContainer && typeof THREE !== "undefined") {
+    const container = sphereContainer;
+    const canvas = document.getElementById("sphereCanvas");
     
-    mouseX = (e.clientX - centerX) / (rect.width / 2);
-    mouseY = (e.clientY - centerY) / (rect.height / 2);
-    
-    if (isMouseDown) {
-      targetRotationY += (e.clientX - lastMouseX) * 0.01;
-      targetRotationX += (e.clientY - lastMouseY) * 0.01;
+    if (!canvas) {
+      console.error("Canvas element not found!");
     } else {
-      targetRotationY = mouseX * 0.5;
-      targetRotationX = -mouseY * 0.5;
-    }
-    
-    lastMouseX = e.clientX;
-    lastMouseY = e.clientY;
-  });
-  
-  container.addEventListener("mousedown", () => {
-    isMouseDown = true;
-  });
-  
-  container.addEventListener("mouseup", () => {
-    isMouseDown = false;
-  });
-  
-  container.addEventListener("mouseleave", () => {
-    isMouseDown = false;
-  });
-  
-  // Animation variables
-  let time = 0;
-  let scaleDirection = 1;
-  let currentScale = 1;
-  const minScale = 0.75; // Prevent clipping while keeping size
-  const maxScale = 1.35; // Allow a bit more growth for presence
-  const scaleSpeed = 0.002;
-  
-  // Color interpolation function
-  function interpolateColor(color1, color2, t) {
-    const r1 = (color1 >> 16) & 255;
-    const g1 = (color1 >> 8) & 255;
-    const b1 = color1 & 255;
-    const r2 = (color2 >> 16) & 255;
-    const g2 = (color2 >> 8) & 255;
-    const b2 = color2 & 255;
-    
-    const r = Math.round(r1 + (r2 - r1) * t);
-    const g = Math.round(g1 + (g2 - g1) * t);
-    const b = Math.round(b1 + (b2 - b1) * t);
-    
-    return (r << 16) | (g << 8) | b;
-  }
-  
-  // Animation loop
-  function animate() {
-    requestAnimationFrame(animate);
-    
-    time += 0.01;
-    
-    // Dynamic scaling - pulse from big to small
-    currentScale += scaleDirection * scaleSpeed;
-    if (currentScale >= maxScale) {
-      currentScale = maxScale;
-      scaleDirection = -1;
-    } else if (currentScale <= minScale) {
-      currentScale = minScale;
-      scaleDirection = 1;
-    }
-    
-    // Calculate normalized scale (0 to 1) for color interpolation
-    const normalizedScale = (currentScale - minScale) / (maxScale - minScale);
-    
-    // Color transition: blue (big) to purple (small)
-    // When scale is max (1.4), normalizedScale = 1, so we want blue
-    // When scale is min (0.6), normalizedScale = 0, so we want purple
-    const colorBig = 0x444ef0; // Blue - when big
-    const colorSmall = 0x8b5cf6; // Purple - when small
-    // Reverse the interpolation: when normalizedScale is 1 (big), use colorBig
-    // when normalizedScale is 0 (small), use colorSmall
-    const currentColor = interpolateColor(colorBig, colorSmall, 1 - normalizedScale);
-    
-    // Smooth rotation following mouse
-    let currentRotationX = spheres[0].mesh.rotation.x;
-    let currentRotationY = spheres[0].mesh.rotation.y;
-    
-    currentRotationX += (targetRotationX - currentRotationX) * 0.05;
-    currentRotationY += (targetRotationY - currentRotationY) * 0.05;
-    
-    // Apply transformations to all spheres
-    spheres.forEach((sphereObj, index) => {
-      const sphere = sphereObj.mesh;
-      const delay = index * 0.1;
-      const scale = currentScale * (1 - index * 0.1);
+      // Scene setup
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ 
+        canvas: canvas,
+        alpha: false, // Opaque background for black
+        antialias: true,
+        powerPreference: "high-performance"
+      });
       
-      // Update color based on scale - use THREE.Color for proper color updates
-      const color = new THREE.Color(currentColor);
-      sphere.material.color.copy(color);
-      sphere.material.needsUpdate = true;
+      // Set clear color to black
+      renderer.setClearColor(0x000000, 1);
       
-      sphere.scale.set(scale, scale, scale);
-      sphere.rotation.x = currentRotationX + time * 0.2 + delay;
-      sphere.rotation.y = currentRotationY + time * 0.3 + delay;
-      sphere.rotation.z = time * 0.1 + delay;
-    });
-    
-    renderer.render(scene, camera);
+      function resizeRenderer() {
+        const rect = container.getBoundingClientRect();
+        const baseSize = Math.min(rect.width, rect.height);
+        const size = baseSize;
+        renderer.setSize(size, size);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        camera.aspect = 1;
+        camera.updateProjectionMatrix();
+        camera.position.set(0, 0, 7);
+        camera.lookAt(0, 0, 0);
+        
+        // Debug camera
+        console.log('Camera position:', camera.position);
+        console.log('Camera looking at:', camera.getWorldDirection(new THREE.Vector3()));
+      }
+      resizeRenderer();
+      window.addEventListener("resize", resizeRenderer);
+      
+      // Subtle ambient light
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+      scene.add(ambientLight);
+      
+      // Warm orange-brown lights from bottom and sides
+      const warmLight1 = new THREE.PointLight(0xff8c42, 0.8, 100);
+      warmLight1.position.set(0, -3, 2);
+      scene.add(warmLight1);
+      
+      const warmLight2 = new THREE.PointLight(0xff8c42, 0.6, 100);
+      warmLight2.position.set(-3, 0, 2);
+      scene.add(warmLight2);
+      
+      const warmLight3 = new THREE.PointLight(0xff8c42, 0.6, 100);
+      warmLight3.position.set(3, 0, 2);
+      scene.add(warmLight3);
+      
+      // Create wireframe brain with nodes and connections
+      const brainGroup = new THREE.Group();
+      
+      try {
+        // Create brain shape using icosahedron as base
+        const baseGeometry = new THREE.IcosahedronGeometry(2, 3);
+        const positions = baseGeometry.attributes.position;
+        const posArray = positions.array;
+        
+        // Create nodes (dots) from vertices
+        const nodes = [];
+        const nodePositions = [];
+        
+        for (let i = 0; i < positions.count; i++) {
+          let x = posArray[i * 3];
+          let y = posArray[i * 3 + 1];
+          let z = posArray[i * 3 + 2];
+          
+          // Normalize and create brain-like shape
+          const radius = Math.sqrt(x * x + y * y + z * z);
+          if (radius > 0) {
+            x /= radius;
+            y /= radius;
+            z /= radius;
+          }
+          
+          // Brain-like deformation
+          const fold1 = Math.sin(y * 4) * 0.1;
+          const fold2 = Math.cos(x * 3) * 0.08;
+          const hemisphereFactor = x > 0 ? 1.02 : 0.98;
+          const scale = 1 + fold1 + fold2;
+          
+          x = x * 2 * scale * hemisphereFactor;
+          y = y * 2 * scale;
+          z = z * 2 * scale;
+          
+          if (Math.abs(x) < 0.15) x *= 0.95;
+          y *= 1.1;
+          
+          nodePositions.push(new THREE.Vector3(x, y, z));
+        }
+        
+        // Create node spheres
+        const nodeGeometry = new THREE.SphereGeometry(0.03, 8, 8);
+        const nodeMaterial = new THREE.MeshBasicMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0.9
+        });
+        
+        nodePositions.forEach((pos, index) => {
+          const node = new THREE.Mesh(nodeGeometry, nodeMaterial.clone());
+          node.position.copy(pos);
+          
+          // Some nodes highlighted in orange
+          if (Math.random() < 0.15) {
+            node.material.color.setHex(0xff8c42);
+            node.material.emissive = new THREE.Color(0xff8c42);
+            node.material.emissiveIntensity = 0.5;
+          }
+          
+          brainGroup.add(node);
+          nodes.push({ mesh: node, position: pos });
+        });
+        
+        // Create connections between nearby nodes
+        const lineMaterial = new THREE.LineBasicMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0.4
+        });
+        
+        const maxDistance = 0.8;
+        const connections = [];
+        
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const distance = nodes[i].position.distanceTo(nodes[j].position);
+            if (distance < maxDistance && Math.random() < 0.3) {
+              const geometry = new THREE.BufferGeometry().setFromPoints([
+                nodes[i].position,
+                nodes[j].position
+              ]);
+              const line = new THREE.Line(geometry, lineMaterial);
+              brainGroup.add(line);
+              connections.push(line);
+            }
+          }
+        }
+        
+        console.log('Nodes created:', nodes.length);
+        console.log('Connections created:', connections.length);
+        
+      } catch (error) {
+        console.error('Error creating brain:', error);
+        // Fallback test
+        const testGeometry = new THREE.SphereGeometry(1, 32, 32);
+        const testMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const testSphere = new THREE.Mesh(testGeometry, testMaterial);
+        brainGroup.add(testSphere);
+      }
+      
+      scene.add(brainGroup);
+        
+        // Verify renderer is set up
+        console.log('Renderer size:', renderer.getSize(new THREE.Vector2()));
+        console.log('Canvas size:', canvas.width, canvas.height);
+        
+        // Initial render
+        renderer.render(scene, camera);
+        console.log('Initial render complete');
+        
+        // Very subtle rotation (almost static as requested)
+        let rotationY = 0;
+        
+        function animate() {
+          requestAnimationFrame(animate);
+          
+          // Extremely slow rotation (barely noticeable)
+          rotationY += 0.0005;
+          brainGroup.rotation.y = rotationY;
+          
+          renderer.render(scene, camera);
+        }
+        
+        animate();
+        console.log('Animation started');
+      }
+    } else {
+      // Debug: Check if elements exist
+      console.error('Brain visualization failed to initialize');
+      console.log('Container:', sphereContainer);
+      console.log('THREE:', typeof THREE);
+      console.log('Canvas:', document.getElementById("sphereCanvas"));
+    }
+  } catch (brainError) {
+    console.error('Error in brain visualization:', brainError);
+    // Don't break the page if brain fails
   }
-  
-  animate();
-}
 
 // Smooth scroll for ghost button
 if (ghostButton) {
@@ -218,8 +244,15 @@ if ("IntersectionObserver" in window) {
   );
 
   // Observe all fade-in elements
-  document.querySelectorAll(".fade-in, .slide-in-left, .slide-in-right, .scale-in").forEach((el) => {
+  const fadeElements = document.querySelectorAll(".fade-in, .slide-in-left, .slide-in-right, .scale-in");
+  fadeElements.forEach((el) => {
     revealObserver.observe(el);
+    
+    // If element is already in viewport, make it visible immediately
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      el.classList.add("visible");
+    }
   });
 
   // Observe experience cards with stagger
